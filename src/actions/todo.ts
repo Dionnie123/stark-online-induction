@@ -47,7 +47,13 @@ export async function getAllByUser(): Promise<Todo[]> {
 
 export async function createTodoAction(data: z.infer<typeof todoSchema>) {
   try {
-    const todo = await todoRepository.create(Object.assign(data));
+    const session = await auth();
+    if (!session) {
+      throw Error("Unauthenticated. Please login.");
+    }
+    const todo = await todoRepository.create(
+      Object.assign(data, { userId: session.user.id })
+    );
     return todo;
   } catch (error) {
     return { message: "Failed to Create Todo." };
