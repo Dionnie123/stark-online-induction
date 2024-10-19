@@ -16,6 +16,7 @@ export default abstract class IBaseRepository<T, S> {
     if (!options.take || options.take > MAX_RECORDS_LIMIT) {
       options.take = MAX_RECORDS_LIMIT;
     }
+
     return this.modelClient.findMany(options);
   }
 

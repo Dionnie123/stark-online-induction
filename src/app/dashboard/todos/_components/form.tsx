@@ -34,6 +34,7 @@ type FormValues = z.infer<typeof todoSchema>;
 export default function TodoForm({ todo, onSubmit }: TodoFormProps) {
   const [globalError, setGlobalError] = useState<string>("");
   const { data: session, status } = useSession();
+  const userId = { userId: session?.user.id ?? "" };
   const form = useForm<FormValues>({
     resolver: zodResolver(todoSchema),
     defaultValues: todo
@@ -48,8 +49,7 @@ export default function TodoForm({ todo, onSubmit }: TodoFormProps) {
   const _onSubmit = async (values: FormValues) => {
     try {
       if (todo === undefined) {
-        const userid = { user_id: session?.user.id };
-        await createTodoAction({ ...values, ...userid });
+        await createTodoAction({ ...values, ...userId });
       } else {
         await updateTodoAction(todo.id, values);
       }
@@ -101,6 +101,7 @@ export default function TodoForm({ todo, onSubmit }: TodoFormProps) {
                     placeholder="Enter Title"
                     autoComplete="off"
                     {...field}
+                    value={field.value ?? ""}
                   />
                 </FormControl>
                 <FormMessage />
@@ -119,6 +120,7 @@ export default function TodoForm({ todo, onSubmit }: TodoFormProps) {
                     autoComplete="off"
                     placeholder="Enter Description."
                     {...field}
+                    value={field.value ?? ""}
                   />
                 </FormControl>
                 <FormMessage />

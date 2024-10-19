@@ -5,7 +5,10 @@ export const todoSchema = object({
     1,
     "Title is required."
   ),
-  description: string().max(500, "Description must be 500 char or less."),
+  description: string()
+    .max(500, "Description must be 500 char or less.")
+    .nullable()
+    .optional(),
   isCompleted: boolean().default(false),
-  user_id: string().optional(),
+  userId: string().optional(),
 });

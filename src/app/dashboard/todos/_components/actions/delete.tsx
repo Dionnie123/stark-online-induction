@@ -1,21 +1,16 @@
 "use client";
 
+import { deleteTodoAction } from "@/actions/todo";
 import React from "react";
 import { mutate } from "swr";
-
-export async function fetchAllItems() {
-  console.log("REFETCHING???");
-  const response = await fetch("/api/todos");
-  const data = await response.json();
-  return data;
-}
 
 export default function DeleteTodo({ id }: { id: string }) {
   const handleDelete = async () => {
     try {
-      await fetch(`/api/todos?id=${id}`, {
+      /* await fetch(`/api/todos?id=${id}`, {
         method: "DELETE",
-      });
+      }); */
+      await deleteTodoAction(id);
       mutate("/api/todos");
     } catch (error) {
       console.log("An unexpected error occurred. Please try again.");

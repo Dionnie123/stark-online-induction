@@ -63,6 +63,7 @@ export const columns: ColumnDef<Todo>[] = [
   },
   {
     id: "actions",
+    header: "Actions",
     cell: ({ row }) => {
       const todo = row.original;
 

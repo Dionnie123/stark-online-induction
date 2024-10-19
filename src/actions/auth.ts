@@ -5,7 +5,6 @@ import { signUpSchema } from "@/entities/zod/signup.schema";
 import { AuthError } from "next-auth";
 import bcryptjs from "bcryptjs";
 import { signIn, signOut } from "@/auth";
-import { mutate } from "swr";
 
 export async function handleCredentialsSignin({
   email,
@@ -39,7 +38,6 @@ export async function handleGithubSignin() {
 
 export async function handleSignOut() {
   await signOut();
-  mutate(() => true, undefined, false);
 }
 
 export async function handleSignUp({

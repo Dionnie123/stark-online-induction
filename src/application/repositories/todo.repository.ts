@@ -18,7 +18,7 @@ export default class TodoRepository extends IBaseRepository<
   }
 
   getAllByUser(
-    user_id: string,
+    userId: string,
     options: Record<string, any> = {}
   ): Promise<Todo[]> {
     if (!options.orderBy) {
@@ -28,7 +28,7 @@ export default class TodoRepository extends IBaseRepository<
       options.take = MAX_RECORDS_LIMIT;
     }
 
-    options.where = { user_id };
+    options.where = { userId };
     return this.modelClient.findMany(options);
   }
 }

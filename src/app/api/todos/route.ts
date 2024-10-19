@@ -1,25 +1,31 @@
 import prisma from "../../../../prisma/prisma";
 
 import TodoRepository from "@/application/repositories/todo.repository";
+import { auth } from "@/auth";
 import { todoSchema } from "@/entities/zod/todo.schema";
 import { Todo } from "@prisma/client";
-import { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
-import { getSession } from "next-auth/react";
 import { NextRequest, NextResponse } from "next/server";
 
 const todoRepository = new TodoRepository();
 
 export async function GET(req: NextRequest) {
   try {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const { searchParams } = new URL(req.url);
+    const fetchAllTodos = searchParams.get("all") === "true";
+    const session = await auth();
 
-    if (!token) {
+    if (!session) {
       // If no session, return unauthorized error
       return NextResponse.json({ message: "Unauthorized" }, { status: 500 });
     }
 
-    const todos = await todoRepository.getAllByUser(`${token.id}`);
+    if (fetchAllTodos) {
+      const todos = await todoRepository.getAll();
+      return NextResponse.json(todos);
+    }
+
+    const todos = await todoRepository.getAllByUser(session.user.id!);
     return NextResponse.json(todos);
   } catch (error) {
     console.error("Error fetching todos:", error);
@@ -53,7 +59,7 @@ export async function POST(req: NextRequest) {
 
     const newTodo = await prisma.todo.create({
       data: {
-        user_id: token.id,
+        userId: token.id,
         title: todoData.title,
         description: todoData.description || "",
         isCompleted: todoData.isCompleted,

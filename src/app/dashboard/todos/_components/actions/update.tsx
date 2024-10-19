@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import TodoForm from "../form";
-import { DialogTitle } from "@radix-ui/react-dialog";
+import { Description, DialogTitle } from "@radix-ui/react-dialog";
 import { Todo } from "@prisma/client";
 import {
   Dialog,
@@ -32,7 +32,10 @@ export default function UpdateTodo({ defaultValues }: UpdateTodoProps) {
         title="Update Todo"
         className="sm:max-w-[425px bg-white"
       >
-        <DialogTitle>Update Todo</DialogTitle>
+        <DialogTitle className="scroll-m-20 text-2xl font-semibold tracking-tight">
+          Update Todo
+        </DialogTitle>
+        <Description>Update todo.</Description>
         <DialogHeader></DialogHeader>
         <TodoForm onSubmit={handleOnSubmit} todo={defaultValues} />
       </DialogContent>
