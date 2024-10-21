@@ -48,7 +48,6 @@ export async function createTodoAction(data: z.infer<typeof todoSchema>) {
     const todo = await todoRepository.create(
       Object.assign(data, { userId: session.user.id })
     );
-    throw Error("Mamaloan");
     return todo;
   } catch (error) {
     throw error;
