@@ -26,7 +26,7 @@ export default function CreateTodo() {
           <DialogTitle className="scroll-m-20 text-2xl font-semibold tracking-tight">
             Create Todo
           </DialogTitle>
-          <Description>Create todo.</Description>
+          <Description className="sr-only">Create todo.</Description>
           <TodoForm onSubmit={handleOnSubmit} />
         </DialogContent>
       </Dialog>

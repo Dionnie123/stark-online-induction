@@ -13,9 +13,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Checkbox } from "../../../../../components/ui/checkbox";
+
 import UpdateTodo from "../actions/update";
 import DeleteTodo from "../actions/delete";
+import { Checkbox } from "@/components/ui/checkbox";
 export const columns: ColumnDef<Todo>[] = [
   {
     id: "select",

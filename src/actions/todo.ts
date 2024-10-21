@@ -3,15 +3,9 @@ import TodoRepository from "@/application/repositories/todo.repository";
 import { todoSchema } from "@/entities/zod/todo.schema";
 import { auth } from "@/auth";
 import { z } from "zod";
-import { error } from "console";
 import { Todo } from "@prisma/client";
 
 const todoRepository = new TodoRepository();
-
-type StatusMessage = {
-  status: "success" | "error" | "warning";
-  message: string;
-};
 
 export async function getAllTodosAction(): Promise<Todo[]> {
   try {
@@ -28,7 +22,7 @@ export async function getAllTodosAction(): Promise<Todo[]> {
 
     return todos;
   } catch (error) {
-    throw Error(error?.toString());
+    throw error;
   }
 }
 
@@ -41,7 +35,7 @@ export async function getAllByUser(): Promise<Todo[]> {
     const todos = await todoRepository.getAllByUser(session.user.id!);
     return todos;
   } catch (error) {
-    throw Error("Failed to fetch todo for user.");
+    throw error;
   }
 }
 
@@ -54,9 +48,10 @@ export async function createTodoAction(data: z.infer<typeof todoSchema>) {
     const todo = await todoRepository.create(
       Object.assign(data, { userId: session.user.id })
     );
+    throw Error("Mamaloan");
     return todo;
   } catch (error) {
-    return { message: "Failed to Create Todo." };
+    throw error;
   }
 }
 
@@ -65,18 +60,26 @@ export async function updateTodoAction(
   data: z.infer<typeof todoSchema>
 ) {
   try {
+    const session = await auth();
+    if (!session) {
+      throw Error("Unauthenticated. Please login.");
+    }
     const todo = await todoRepository.update(id, Object.assign(data));
     return todo;
   } catch (error) {
-    return { message: "Failed to Update Todo." };
+    throw error;
   }
 }
 
 export async function deleteTodoAction(id: string) {
   try {
+    const session = await auth();
+    if (!session) {
+      throw Error("Unauthenticated. Please login.");
+    }
     const todo = await todoRepository.delete(id);
     return todo;
   } catch (error) {
-    return { message: "Database Error: Failed to Delete Todo." };
+    throw error;
   }
 }

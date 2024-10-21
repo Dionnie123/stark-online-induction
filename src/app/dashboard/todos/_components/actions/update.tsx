@@ -28,14 +28,16 @@ export default function UpdateTodo({ defaultValues }: UpdateTodoProps) {
         <p className="w-full p-2 py-1">Update</p>
       </DialogTrigger>
       <DialogContent
+        onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => e.stopPropagation()}
+        onPointerMove={(e) => e.stopPropagation()}
         title="Update Todo"
         className="sm:max-w-[425px bg-white"
       >
         <DialogTitle className="scroll-m-20 text-2xl font-semibold tracking-tight">
           Update Todo
         </DialogTitle>
-        <Description>Update todo.</Description>
+        <Description className="sr-only">Update todo.</Description>
         <DialogHeader></DialogHeader>
         <TodoForm onSubmit={handleOnSubmit} todo={defaultValues} />
       </DialogContent>
