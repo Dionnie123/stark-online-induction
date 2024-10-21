@@ -17,22 +17,13 @@ export async function getAllTodosAction(): Promise<Todo[]> {
     if (session.user.role == "admin") {
       todos = await todoRepository.getAll();
     } else if (session.user.role == "user") {
-      todos = await todoRepository.getAllByUser(session.user.id!);
+      todos = await todoRepository.getAll({
+        where: {
+          userId: session.user.id!,
+        },
+      });
     }
 
-    return todos;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function getAllByUser(): Promise<Todo[]> {
-  try {
-    const session = await auth();
-    if (!session) {
-      throw Error("Unauthenticated. Please login.");
-    }
-    const todos = await todoRepository.getAllByUser(session.user.id!);
     return todos;
   } catch (error) {
     throw error;
