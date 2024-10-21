@@ -2,6 +2,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/auth";
+import UserForm from "./form";
 
 function titleCase(str: string) {
   return str.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
@@ -23,6 +24,7 @@ export default async function ProfilePage() {
 
       <p>{JSON.stringify(session?.user ?? "")} </p>
       <div className=" space-y-6">
+        <UserForm />
         <header className="space-y-1.5">
           <div className="flex items-center space-x-4">
             <img

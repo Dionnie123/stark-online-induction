@@ -1,14 +1,7 @@
 "use client";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
+
 import { Control, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,50 +9,49 @@ import LoadingButton from "@/components/loading-button";
 import { useState } from "react";
 
 import { mutate } from "swr";
-import { Todo } from "@prisma/client";
-import ErrorMessage from "@/components/error-message";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { todoSchema } from "@/entities/zod/todo.schema";
-import { createTodoAction, updateTodoAction } from "@/actions/todo";
-import { useSession } from "next-auth/react";
 
-type TodoFormProps = {
-  todo?: Todo;
-  onSubmit: () => void;
+import ErrorMessage from "@/components/error-message";
+
+import { createUserAction, updateUserAction } from "@/actions/user";
+
+import { TextInput } from "@/lib/form-helpers";
+import { userSchema } from "@/entities/zod/user.schema";
+import { User } from "@prisma/client";
+
+type UserFormProps = {
+  user?: User;
+  onSubmit?: () => void;
 };
 
-type FormValues = z.infer<typeof todoSchema>;
+type FormValues = z.infer<typeof userSchema>;
 
-export default function TodoForm({ todo, onSubmit }: TodoFormProps) {
+export default function UserForm({ user, onSubmit }: UserFormProps) {
   const [globalError, setGlobalError] = useState<string>("");
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(todoSchema),
-    defaultValues: todo
+    resolver: zodResolver(userSchema),
+    defaultValues: user
       ? {
-          title: todo.title,
-          description: todo.description,
-          isCompleted: todo.isCompleted,
-          userId: todo.userId,
+          name: user.name,
+          email: user.email,
         }
       : undefined,
   });
 
   const _onSubmit = async (values: FormValues) => {
     try {
-      if (todo === undefined) {
-        await createTodoAction(values);
+      if (user === undefined) {
+        await createUserAction(values);
       } else {
-        await updateTodoAction(todo.id, values);
+        await updateUserAction(user.id, values);
       }
-      mutate("/api/todos");
+      mutate("/api/users");
     } catch (error) {
       console.log("An unexpected error occurred. Please try again.");
       setGlobalError(`${error}`);
     }
     form.reset();
-    onSubmit();
+    onSubmit ? onSubmit() : null;
   };
 
   return (
@@ -67,67 +59,17 @@ export default function TodoForm({ todo, onSubmit }: TodoFormProps) {
       {globalError && <ErrorMessage error={globalError} />}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(_onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    required
-                    placeholder="Enter Title"
-                    autoComplete="off"
-                    {...field}
-                    value={field.value ?? ""}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    autoComplete="off"
-                    placeholder="Enter Description."
-                    {...field}
-                    value={field.value ?? ""}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="isCompleted"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormLabel className="space-y-1 leading-none">
-                  Description
-                </FormLabel>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <TextInput control={form.control} name="name" />
+            </div>
+            <div>
+              <TextInput control={form.control} name="email" />
+            </div>
+          </div>
 
           <LoadingButton pending={form.formState.isSubmitting}>
-            {todo ? "Update" : "Create"}
+            {user ? "Update" : "Create"}
           </LoadingButton>
         </form>
       </Form>
