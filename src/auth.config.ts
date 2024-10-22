@@ -2,8 +2,8 @@ import Credentials from "next-auth/providers/credentials";
 import Github from "next-auth/providers/github";
 import bcryptjs from "bcryptjs";
 import { NextAuthConfig } from "next-auth";
-import { signInSchema } from "./entities/zod/signin.schema";
-import prisma from "../prisma/prisma";
+import { signInSchema } from "./lib/zod/signin.schema";
+import prisma from "./lib/db/prisma";
 
 const publicRoutes = ["/", "/auth/signin", "/auth/signup"];
 const authRoutes = ["/auth/signin", "/auth/signup"];
@@ -90,17 +90,27 @@ export default {
     jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id as string;
+        token.name = user.name as string;
         token.role = user.role as string;
       }
-      if (trigger === "update" && session) {
-        token = { ...token, ...session };
+      if (trigger === "update" && session.name) {
+        token.name = session.name;
       }
+
+      console.log("NEW JWT:" + JSON.stringify(token));
       return token;
     },
     session({ session, token }) {
-      session.user.id = token.id;
-      session.user.role = token.role;
-      return session;
+      console.log("NEW SESSION:" + JSON.stringify(session.user));
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          name: token.name,
+          role: token.role,
+        },
+      };
     },
   },
   pages: {

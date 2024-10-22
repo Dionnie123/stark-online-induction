@@ -1,12 +1,11 @@
 import { PrismaClient } from "@prisma/client/extension";
-import { z } from "zod";
 
 const DEFAULT_ORDER_BY = {
   createdAt: "desc",
 };
 const MAX_RECORDS_LIMIT = 100;
 
-export default abstract class IBaseRepository<T, S> {
+export default abstract class IBaseRepository<T, Z> {
   constructor(protected modelClient: PrismaClient) {}
 
   getAll(options: Record<string, any> = {}): Promise<T[]> {
@@ -28,13 +27,13 @@ export default abstract class IBaseRepository<T, S> {
     });
   }
 
-  create(data: S): Promise<T> {
+  create(data: Z): Promise<T> {
     return this.modelClient.create({
       data: data,
     });
   }
 
-  update(id: string, data: S): Promise<T> {
+  update(id: string, data: Z): Promise<T> {
     return this.modelClient.update({
       where: { id },
       data: data,

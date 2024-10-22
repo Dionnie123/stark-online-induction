@@ -1,8 +1,9 @@
 import { z } from "zod";
-import prisma from "../../../prisma/prisma";
+
 import IBaseRepository from "./base.repository.interface";
 import { Todo } from "@prisma/client";
-import { todoSchema } from "@/entities/zod/todo.schema";
+import { todoSchema } from "@/lib/zod/todo.schema";
+import prisma from "@/lib/db/prisma";
 
 export default class TodoRepository extends IBaseRepository<
   Todo,

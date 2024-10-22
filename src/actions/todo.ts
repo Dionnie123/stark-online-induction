@@ -1,9 +1,10 @@
 "use server";
 import TodoRepository from "@/application/repositories/todo.repository";
-import { todoSchema } from "@/entities/zod/todo.schema";
+
 import { auth } from "@/auth";
 import { z } from "zod";
 import { Todo } from "@prisma/client";
+import { todoSchema } from "@/lib/zod/todo.schema";
 
 const todoRepository = new TodoRepository();
 
@@ -36,9 +37,16 @@ export async function createTodoAction(data: z.infer<typeof todoSchema>) {
     if (!session) {
       throw Error("Unauthenticated. Please login.");
     }
-    const todo = await todoRepository.create(
-      Object.assign(data, { userId: session.user.id })
-    );
+    const todo = await todoRepository.create({
+      ...data,
+      ...{
+        user: {
+          connect: {
+            id: session.user.id,
+          },
+        },
+      },
+    });
     return todo;
   } catch (error) {
     throw error;

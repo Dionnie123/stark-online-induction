@@ -1,17 +1,19 @@
+"use client";
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/auth";
 import UserForm from "./form";
+import { useSession } from "next-auth/react";
 
 function titleCase(str: string) {
   return str.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
 }
 
-export default async function ProfilePage() {
-  const session = await auth();
+export default function ProfilePage() {
+  const { update, data } = useSession();
 
-  console.log({ session });
   return (
     <div>
       {/*  <button
@@ -22,7 +24,7 @@ export default async function ProfilePage() {
         Update session
       </button> */}
 
-      <p>{JSON.stringify(session?.user ?? "")} </p>
+      <p>{JSON.stringify(data?.user ?? "")} </p>
       <div className=" space-y-6">
         <UserForm />
         <header className="space-y-1.5">
@@ -36,9 +38,9 @@ export default async function ProfilePage() {
               style={{ aspectRatio: "96/96", objectFit: "cover" }}
             />
             <div className="space-y-1.5">
-              <h1 className="text-2xl font-bold">{session?.user.name ?? ""}</h1>
+              <h1 className="text-2xl font-bold">{data?.user.name ?? ""}</h1>
               <p className="text-gray-500 dark:text-gray-400">
-                {titleCase(session?.user.role ?? "")}
+                {titleCase(data?.user.role ?? "")}
               </p>
             </div>
           </div>
@@ -52,7 +54,7 @@ export default async function ProfilePage() {
                 <Input
                   id="name"
                   placeholder="Enter your name"
-                  defaultValue={session?.user.name ?? ""}
+                  defaultValue={data?.user.name ?? ""}
                 />
               </div>
               <div>
@@ -60,7 +62,7 @@ export default async function ProfilePage() {
                 <Input
                   id="email"
                   placeholder="Enter your email"
-                  type={session?.user.email ?? ""}
+                  type={data?.user.email ?? ""}
                 />
               </div>
               <div>

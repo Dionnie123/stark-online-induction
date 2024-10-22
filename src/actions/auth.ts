@@ -1,7 +1,7 @@
 "use server";
 
-import prisma from "../../prisma/prisma";
-import { signUpSchema } from "@/entities/zod/signup.schema";
+import prisma from "../lib/db/prisma";
+import { signUpSchema } from "@/lib/zod/signup.schema";
 import { AuthError } from "next-auth";
 import bcryptjs from "bcryptjs";
 import { signIn, signOut } from "@/auth";

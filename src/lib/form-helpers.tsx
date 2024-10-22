@@ -142,7 +142,7 @@ export function CheckboxInput<
       name={name}
       key={name}
       render={({ field }) => (
-        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+        <FormItem className="flex flex-row items-start space-x-2 space-y-0">
           <FormControl>
             <Checkbox
               {...field}

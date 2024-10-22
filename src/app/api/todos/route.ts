@@ -1,8 +1,8 @@
-import prisma from "../../../../prisma/prisma";
+import prisma from "../../../lib/db/prisma";
 
 import TodoRepository from "@/application/repositories/todo.repository";
 import { auth } from "@/auth";
-import { todoSchema } from "@/entities/zod/todo.schema";
+import { todoSchema } from "@/lib/zod/todo.schema";
 import { Todo } from "@prisma/client";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";

@@ -4,8 +4,8 @@ import UserRepository from "@/application/repositories/user.repository";
 import { auth } from "@/auth";
 import { z } from "zod";
 import { User } from "@prisma/client";
-import { userSchema } from "@/entities/zod/user.schema";
-
+import { UserSchema } from "@/lib/zod/user.schema";
+import bcryptjs from "bcryptjs";
 const userRepository = new UserRepository();
 
 export async function getAllUsersAction(): Promise<User[]> {
@@ -31,7 +31,22 @@ export async function getAllUsersAction(): Promise<User[]> {
   }
 }
 
-export async function createUserAction(data: z.infer<typeof userSchema>) {
+export async function getUserAction(
+  id: string
+): Promise<User | null | undefined> {
+  try {
+    const session = await auth();
+    if (!session) {
+      throw Error("Unauthenticated. Please login.");
+    }
+    const user = await userRepository.getOne(id);
+    return user;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function createUserAction(data: z.infer<typeof UserSchema>) {
   try {
     const session = await auth();
     if (!session) {
@@ -46,14 +61,27 @@ export async function createUserAction(data: z.infer<typeof userSchema>) {
 
 export async function updateUserAction(
   id: string,
-  data: z.infer<typeof userSchema>
+  data: z.infer<typeof UserSchema>
 ) {
   try {
     const session = await auth();
     if (!session) {
       throw Error("Unauthenticated. Please login.");
     }
-    const user = await userRepository.update(id, Object.assign(data));
+
+    let hashedPassword: string | null | undefined;
+    if (data.confirmPassword != null) {
+      hashedPassword = await bcryptjs.hash(data.confirmPassword, 10);
+    }
+
+    const user = await userRepository.update(id, {
+      ...{
+        email: data.email,
+        password: hashedPassword,
+      },
+      password: hashedPassword,
+    });
+
     return user;
   } catch (error) {
     throw error;

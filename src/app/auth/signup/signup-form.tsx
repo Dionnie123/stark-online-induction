@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import ErrorMessage from "../../../components/error-message";
-import { signUpSchema } from "@/entities/zod/signup.schema";
+import { signUpSchema } from "@/lib/zod/signup.schema";
 import { handleCredentialsSignin, handleSignUp } from "@/actions/auth";
 
 export default function SignUpForm() {

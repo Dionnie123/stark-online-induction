@@ -15,43 +15,35 @@ import ErrorMessage from "@/components/error-message";
 import { createUserAction, updateUserAction } from "@/actions/user";
 
 import { TextInput } from "@/lib/form-helpers";
-import { userSchema } from "@/entities/zod/user.schema";
+import { UserSchema } from "@/lib/zod/user.schema";
 import { User } from "@prisma/client";
+import { auth } from "@/auth";
+import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
+import { revalidatePath } from "next/cache";
 
-type UserFormProps = {
-  user?: User;
-  onSubmit?: () => void;
-};
+type FormValues = z.infer<typeof UserSchema>;
 
-type FormValues = z.infer<typeof userSchema>;
-
-export default function UserForm({ user, onSubmit }: UserFormProps) {
+export default function UserForm() {
+  const { update, data } = useSession();
   const [globalError, setGlobalError] = useState<string>("");
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(userSchema),
-    defaultValues: user
-      ? {
-          name: user.name,
-          email: user.email,
-        }
-      : undefined,
+    resolver: zodResolver(UserSchema),
+    defaultValues: {
+      name: data?.user.name,
+      email: data?.user.email!,
+    },
   });
 
   const _onSubmit = async (values: FormValues) => {
     try {
-      if (user === undefined) {
-        await createUserAction(values);
-      } else {
-        await updateUserAction(user.id, values);
-      }
-      mutate("/api/users");
+      await updateUserAction(data?.user.id!, values);
+      update({ ...data?.user, ...values });
     } catch (error) {
       console.log("An unexpected error occurred. Please try again.");
       setGlobalError(`${error}`);
     }
-    form.reset();
-    onSubmit ? onSubmit() : null;
   };
 
   return (
@@ -64,12 +56,26 @@ export default function UserForm({ user, onSubmit }: UserFormProps) {
               <TextInput control={form.control} name="name" />
             </div>
             <div>
-              <TextInput control={form.control} name="email" />
+              <TextInput disabled control={form.control} name="email" />
+            </div>
+            <div>
+              <TextInput
+                type="password"
+                control={form.control}
+                name="newPassword"
+              />
+            </div>
+            <div>
+              <TextInput
+                type="password"
+                control={form.control}
+                name="confirmPassword"
+              />
             </div>
           </div>
 
           <LoadingButton pending={form.formState.isSubmitting}>
-            {user ? "Update" : "Create"}
+            Update
           </LoadingButton>
         </form>
       </Form>

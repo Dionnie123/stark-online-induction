@@ -9,9 +9,8 @@ import { useState } from "react";
 import { mutate } from "swr";
 import { Todo } from "@prisma/client";
 import ErrorMessage from "@/components/error-message";
-import { todoSchema } from "@/entities/zod/todo.schema";
+import { todoSchema } from "@/lib/zod/todo.schema";
 import { createTodoAction, updateTodoAction } from "@/actions/todo";
-
 import { CheckboxInput, TextAreaInput, TextInput } from "@/lib/form-helpers";
 
 type TodoFormProps = {
@@ -19,12 +18,12 @@ type TodoFormProps = {
   onSubmit: () => void;
 };
 
-type FormValues = z.infer<typeof todoSchema>;
+type FormSchema = z.infer<typeof todoSchema>;
 
 export default function TodoForm({ todo, onSubmit }: TodoFormProps) {
   const [globalError, setGlobalError] = useState<string>("");
 
-  const form = useForm<FormValues>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(todoSchema),
     defaultValues: todo
       ? {
@@ -36,7 +35,7 @@ export default function TodoForm({ todo, onSubmit }: TodoFormProps) {
       : undefined,
   });
 
-  const _onSubmit = async (values: FormValues) => {
+  const _onSubmit = async (values: FormSchema) => {
     try {
       if (todo === undefined) {
         await createTodoAction(values);
@@ -47,9 +46,7 @@ export default function TodoForm({ todo, onSubmit }: TodoFormProps) {
       form.reset();
       onSubmit();
     } catch (error) {
-      console.log("An unexpected error occurred. Please try again.");
       setGlobalError(`${error}`);
-      form.reset();
     }
   };
 
@@ -65,12 +62,6 @@ export default function TodoForm({ todo, onSubmit }: TodoFormProps) {
             control={form.control}
             name="isCompleted"
           />
-          {/*   <SelectInput
-            name="isCompleted"
-            label="What is your name?"
-            control={form.control}
-            options={[{ value: "true", label: "Done" }]} // Pass the options
-          /> */}
           <LoadingButton pending={form.formState.isSubmitting}>
             {todo ? "Update" : "Create"}
           </LoadingButton>
