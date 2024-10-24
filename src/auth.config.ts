@@ -1,5 +1,7 @@
 import Credentials from "next-auth/providers/credentials";
 import Github from "next-auth/providers/github";
+import Resend from "next-auth/providers/resend";
+import EmailProvider from "next-auth/providers/nodemailer";
 import bcryptjs from "bcryptjs";
 import { NextAuthConfig } from "next-auth";
 import { signInSchema } from "./lib/zod/signin.schema";
@@ -9,8 +11,27 @@ const publicRoutes = ["/", "/auth/signin", "/auth/signup"];
 const authRoutes = ["/auth/signin", "/auth/signup"];
 
 export default {
-  secret: process.env.NEXTAUTH_SECRET,
   providers: [
+    Resend({
+      apiKey: process.env.AUTH_RESEND_KEY,
+      from: process.env.EMAIL_FROM,
+    }),
+
+    /*    EmailProvider({
+      id: "email",
+      name: "email",
+      apiKey: process.env.AUTH_RESEND_KEY,
+      from: process.env.EMAIL_FROM,
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: process.env.EMAIL_SERVER_POST,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD,
+        },
+      },
+    }),
+ */
     Github({ allowDangerousEmailAccountLinking: true }),
 
     Credentials({

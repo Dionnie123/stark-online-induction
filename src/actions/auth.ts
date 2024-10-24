@@ -32,6 +32,26 @@ export async function handleCredentialsSignin({
   }
 }
 
+export async function handlePasswordlessSignin({ email }: { email: string }) {
+  try {
+    await signIn("resend", { email, redirectTo: "/dashboard" });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin":
+          return {
+            message: "Invalid credentials",
+          };
+        default:
+          return {
+            message: "" + error,
+          };
+      }
+    }
+    throw error;
+  }
+}
+
 export async function handleGithubSignin() {
   await signIn("github", { redirectTo: "/" });
 }
@@ -80,6 +100,7 @@ export async function handleSignUp({
       data: {
         name,
         email,
+        role: "admin",
         password: hashedPassword,
       },
     });

@@ -69,18 +69,18 @@ export async function updateUserAction(
       throw Error("Unauthenticated. Please login.");
     }
 
-    let hashedPassword: string | null | undefined;
+    let hashedPassword: string | undefined;
     if (data.confirmPassword != null) {
       hashedPassword = await bcryptjs.hash(data.confirmPassword, 10);
     }
 
     const user = await userRepository.update(id, {
-      ...{
-        email: data.email,
-        password: hashedPassword,
-      },
+      email: data.email,
+      name: data.name,
       password: hashedPassword,
     });
+
+    console.log("UPDATED USER" + JSON.stringify(user));
 
     return user;
   } catch (error) {

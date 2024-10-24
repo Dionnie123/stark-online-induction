@@ -10,3 +10,5 @@ export const config = {
     "/((?!_next/static|_next/image|.*\\.png$).*)", // Protect all other routes except static assets
   ],
 };
+
+export const runtime = "experimental-edge";

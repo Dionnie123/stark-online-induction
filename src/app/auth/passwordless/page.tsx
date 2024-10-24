@@ -1,7 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import SignInGithubForm from "@/app/auth/signin/components/github-form";
-import CredentialsSigninForm from "@/app/auth/signin/components/credentials-form";
-import PasswordlessSigninForm from "../passwordless/components/passwordless-form";
+import PasswordlessSigninForm from "@/app/auth/signin/components/credentials-form";
 
 export default function SignInPage() {
   return (
@@ -10,7 +8,7 @@ export default function SignInPage() {
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-3xl font-bold text-center text-gray-800">
-              Welcome
+              Welcome Back
             </CardTitle>
           </CardHeader>
           <CardContent>

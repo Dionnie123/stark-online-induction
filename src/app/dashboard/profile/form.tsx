@@ -52,12 +52,40 @@ export default function UserForm() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(_onSubmit)} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <header className="space-y-1.5">
+              <div className="flex items-center space-x-4 col-span-2">
+                <img
+                  src="https://images.unsplash.com/photo-1516216628859-9bccecab13ca?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  alt="Avatar"
+                  width="96"
+                  height="96"
+                  className="border rounded-full"
+                  style={{ aspectRatio: "96/96", objectFit: "cover" }}
+                />
+                <div className="space-y-1.5">
+                  <h1 className="text-2xl font-bold">
+                    {data?.user.name ?? ""}
+                  </h1>
+                  <p className="text-gray-500 dark:text-gray-400">
+                    {data?.user.role ?? ""}
+                  </p>
+                </div>
+              </div>
+            </header>
+
+            <h2 className="text-lg font-semibold col-span-2">
+              Personal Information
+            </h2>
             <div>
               <TextInput control={form.control} name="name" />
             </div>
             <div>
               <TextInput disabled control={form.control} name="email" />
             </div>
+
+            <h2 className="text-lg font-semibold col-span-2">
+              Change Password
+            </h2>
             <div>
               <TextInput
                 type="password"

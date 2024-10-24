@@ -6,7 +6,15 @@ export const UserSchema = object({
   password: string().min(8).optional().nullable(),
   newPassword: string().min(8).optional().nullable(),
   confirmPassword: string().min(8).optional().nullable(),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+}).refine(
+  (data) => {
+    if (data.newPassword || data.confirmPassword) {
+      return data.newPassword === data.confirmPassword;
+    }
+    return true;
+  },
+  {
+    message: "Passwords must match",
+    path: ["confirmPassword"],
+  }
+);
