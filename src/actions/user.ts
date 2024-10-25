@@ -80,8 +80,6 @@ export async function updateUserAction(
       password: hashedPassword,
     });
 
-    console.log("UPDATED USER" + JSON.stringify(user));
-
     return user;
   } catch (error) {
     throw error;
